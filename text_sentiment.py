@@ -16,7 +16,7 @@ import requests
 import numpy as np
 
 
-def get_data():
+def get_text_sentiment(documents):
     headers = {
         # Request headers. Replace the placeholder key below with your subscription key.
         'Content-Type': 'application/json',
@@ -26,19 +26,10 @@ def get_data():
     params = urllib.parse.urlencode({
     })
 
-    documents = {'documents': [
-        {'id': '1', 'language': 'en',
-         'text': 'I really enjoy the new XBox One S. It has a clean look, it has 4K/HDR resolution and it is affordable.'},
-        {'id': '2', 'language': 'es',
-         'text': 'Este ha sido un dia terrible, llegué tarde al trabajo debido a un accidente automobilistico.'}
-    ]}
     # Replace the example URL below with the URL of the image you want to analyze.
     try:
         response = requests.post("https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment", headers=headers, params={}, json=documents)
         data = response.json()
-        print(data)
     except Exception as e:
         print(e.args)
 
-
-get_data()

@@ -39,7 +39,7 @@ def get_instagram_posts(tag, since, host="http://localhost:3000", limit=20):
             break
 
         d = {}
-        if "edge_media_to_caption" in p:
+        if ("edge_media_to_caption" in p) and (p["edge_media_to_caption"]["edges"]):
             d["text"] = p["edge_media_to_caption"]["edges"][0]["node"]["text"]
         else:
             d["text"] = ""
@@ -49,8 +49,6 @@ def get_instagram_posts(tag, since, host="http://localhost:3000", limit=20):
         if "thumbnail_resources" in p:
             d["thumb_src"] = p["thumbnail_resources"][0]["src"]
         output.append(d)
-
-    print(output)
     return output
 
 if __name__=="__main__":

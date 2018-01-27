@@ -10,3 +10,9 @@ def get_random_url():
     random_index = (randint (0,number_of_links))
     return(dataset[random_index][0][:-1])
 
+'''
+import time
+while True:
+    print(round(time.time()))'''
+
+
