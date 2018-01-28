@@ -52,4 +52,4 @@ if __name__=="__main__":
         for i in range(20):
             time.sleep(0.05)
             for k in keys:
-                add_to_points_list(r, k, outputs[k][i]+(random.random()*0.1))
+                add_to_points_list(r, k, outputs[k][i])
