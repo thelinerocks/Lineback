@@ -65,11 +65,11 @@ def get_most_recent(social_network):
 
 def get_sum_text(category):
     back_to = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
-    return TaggedPost.select(fn.sum(TaggedPost.text_sentiment)).where(TaggedPost.category==category and TaggedPost.date > back_to).scalar()
+    return TaggedPost.select(fn.sum(TaggedPost.text_sentiment)).where((TaggedPost.category==category) & (TaggedPost.date > back_to)).scalar() or 0
 
 def get_sum_image(category):
     back_to = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
-    return TaggedPost.select(fn.sum(TaggedPost.image_emotion)).where(TaggedPost.category==category and TaggedPost.date > back_to).scalar()
+    return TaggedPost.select(fn.sum(TaggedPost.image_emotion)).where((TaggedPost.category==category) & (TaggedPost.date > back_to)).scalar() or 0
 
 
 if __name__=="__main__":

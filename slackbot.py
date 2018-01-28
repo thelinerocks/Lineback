@@ -8,6 +8,8 @@ from slackclient import SlackClient
 import cognition
 import database
 
+SLACK_HASHTAGS = r'#(?P<match>\S*).*'
+
 # constants
 RTM_READ_DELAY = 1 # 1 second delay between reading from RTM
 EXAMPLE_COMMAND = "do"
@@ -77,6 +79,7 @@ def handle_command(command, channel):
     command_info['message'] = command
     command_info['text_sentiment'] = sentiment_score
     command_info['analysed'] = True
+    command_info['category'] = cognition.find_category(command, expr=SLACK_HASHTAGS)
     database.save_post(command_info)
 
     # Sends the response back to the channel

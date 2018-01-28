@@ -16,12 +16,13 @@ class make_data(object):
             total_array[i] = (data[0]) + ((data[1]-data[0])/size)*i
         return total_array
 
-    def get_ticks(self,category, old_total):
+    def get_ticks(self,category, old_total, offset=0):
         sum_text = get_sum_text(category)
         sum_image = get_sum_image(category)
         total = sum_text + sum_image
         logger.info("Got text,image %.2f, %.2f for %s", sum_text, sum_image, category)
-        return self.add_steps([old_total,total])
+        x = self.add_steps([old_total,total])
+        return x
 
 def add_to_points_list(r, key, val):
     r.lpush(key, val)
@@ -39,13 +40,6 @@ if __name__=="__main__":
     r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
     while True:
-        handler = logging.StreamHandler()
-        formatter = logging.Formatter(
-                '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-        logger.setLevel(logging.DEBUG)
-
         keys = r.keys(pattern="points-*")
         outputs = {}
         for k in keys:
@@ -58,42 +52,4 @@ if __name__=="__main__":
         for i in range(20):
             time.sleep(0.05)
             for k in keys:
-                add_to_points_list(r, k, outputs[k][i])
-
-"""
-#!/bin/bash
-
-import redis
-import random
-import time
-import logging
-
-logger = logging.getLogger("provider")
-
-if __name__=="__main__":
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter(
-            '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    logger.setLevel(logging.DEBUG)
-
-    r = redis.StrictRedis(host='localhost', port=6379, db=0)
-
-    val = 0
-    hashtag1 = "points-ichackupper"
-    hashtag2 = "points-ichacklower"
-
-    while True:
-        time.sleep(0.05)
-        val = random.random()*5
-        r.lpush(hashtag1, val)
-        if r.llen(hashtag1) > 1000:
-            r.rpop(hashtag1)
-
-        val = random.random()*5
-        r.lpush(hashtag2, val)
-        if r.llen(hashtag2) > 1000:
-            r.rpop(hashtag2)
-        logger.debug("Sent datapoints - q length %d", r.llen(hashtag2))
-"""
+                add_to_points_list(r, k, outputs[k][i]+(random.random()*0.1))

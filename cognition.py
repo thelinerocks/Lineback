@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger("cognition")
 
-EXPR = r'#theline\s#(?P<match>\S*).*'
+TWITTER_HASHTAGS = r'#theline\s#(?P<match>\S*).*'
 PHOTO_API_URL = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize"
 TEXT_API_URL = "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment"
 
@@ -65,8 +65,8 @@ def make_text_analytics_document(id, message):
     text['text'] = message
     return {'documents': [text]}
 
-def find_category(message):
-    match = re.search(EXPR, message)
+def find_category(message, expr=TWITTER_HASHTAGS):
+    match = re.search(expr, message)
     if match is not None:
         category = match.groups()[0].lower()
         return category
