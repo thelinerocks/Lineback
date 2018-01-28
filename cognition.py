@@ -2,7 +2,9 @@ import http.client, urllib.request, urllib.parse, urllib.error, base64, sys, jso
 import requests
 import numpy as np
 import database
+import re
 
+EXPR = r'#theline\s#(?P<match>\S*).*'
 PHOTO_API_URL = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize"
 TEXT_API_URL = "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment"
 
@@ -58,11 +60,12 @@ def make_text_analytics_document(id, message):
     text['text'] = message
     return {'documents': [text]}
 
-def find_category(message, categories = ['jaguar']):
-    for category in categories:
-        if category in message:
-            return category
-    return 'none'
+def find_category(message):
+    match = re.search(EXPR, message)
+    if match is not None:
+        category = match.groups()[0].lower()
+        return category
+    return 'global'
 
 def analyse_post():
     post = database.read_next_post()
