@@ -66,7 +66,7 @@ def make_text_analytics_document(id, message):
     return {'documents': [text]}
 
 def find_category(message, expr=TWITTER_HASHTAGS):
-    match = re.search(expr, message)
+    match = re.search(expr, message.lower())
     if match is not None:
         category = match.groups()[0].lower()
         return category
