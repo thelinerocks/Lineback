@@ -25,6 +25,8 @@ def save_post(info_dict):
     if db.is_closed():
         db.connect()
     new_post = TaggedPost(**info_dict)
+    if "date" not in info_dict:
+        new_post.date = datetime.datetime.utcnow()
     new_post.save()
     db.close()
 
@@ -54,6 +56,7 @@ def read_next_n_posts(num):
 def get_most_recent(social_network):
     if db.is_closed():
         db.connect()
+    recent = None
     try:
         recent = TaggedPost.select().order_by(TaggedPost.date.desc()).get()
     except DoesNotExist:
@@ -71,6 +74,18 @@ def get_sum_image(category):
     back_to = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
     return TaggedPost.select(fn.sum(TaggedPost.image_emotion)).where((TaggedPost.category==category) & (TaggedPost.date > back_to)).scalar() or 0
 
+def get_mention(category, last_id):
+    x = None
+    if db.is_closed():
+        db.connect()
+    try:
+        x = TaggedPost.select().where((TaggedPost.category==category) & (TaggedPost.id > last_id)).order_by(TaggedPost.id.desc()).get()
+    except DoesNotExist:
+        return None
+    except Exception as e:
+        print(e)
+    db.close()
+    return x
 
 if __name__=="__main__":
     if sys.argv[1] == "create":
