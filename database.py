@@ -60,6 +60,15 @@ def get_most_recent(social_network):
     db.close()
     return recent.date
 
+def get_sum_text(category):
+    back_to = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
+    return TaggedPost.select(fn.sum(TaggedPost.text_sentiment)).where(TaggedPost.category==category and TaggedPost.date > back_to).scalar()
+
+def get_sum_image(category):
+    back_to = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
+    return TaggedPost.select(fn.sum(TaggedPost.image_emotion)).where(TaggedPost.category==category and TaggedPost.date > back_to).scalar()
+
+
 if __name__=="__main__":
     if sys.argv[1] == "create":
         db.create_tables([TaggedPost])

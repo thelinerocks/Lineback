@@ -3,7 +3,6 @@ import json
 import os
 
 import database
-
 # add own details in separate .py file or directly here:
 from twitter_auth import *
 

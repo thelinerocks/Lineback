@@ -58,7 +58,7 @@ def make_text_analytics_document(id, message):
     text['text'] = message
     return {'documents': [text]}
 
-def find_category(message, categories = []):
+def find_category(message, categories = ['jaguar']):
     for category in categories:
         if category in message:
             return category
