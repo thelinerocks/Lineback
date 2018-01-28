@@ -7,6 +7,7 @@ from instagram import *
 from text_sentiment import *
 import os
 
+import database
 
 
 class get_values(object):
