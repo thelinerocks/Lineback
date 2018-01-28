@@ -10,7 +10,7 @@ class TaggedPost(Model):
     profile_pic_url = CharField()
     image_url = CharField()
     location = CharField(null=True)
-    text_sentiment = CharField(null=True)
+    text_sentiment = DecimalField(null=True)
     image_emotion = CharField(null=True)
     json_data = TextField(null=True)
     category = CharField(null=True)

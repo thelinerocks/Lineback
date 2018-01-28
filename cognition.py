@@ -1,9 +1,10 @@
 import http.client, urllib.request, urllib.parse, urllib.error, base64, sys, json
 import requests
 import numpy as np
+import database
 
-uri = 'westus.api.cognitive.microsoft.com'
-path = '/text/analytics/v2.0/sentiment'
+PHOTO_API_URL = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize"
+TEXT_API_URL = "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment"
 
 def get_text_sentiment(documents):
     headers = {
@@ -17,9 +18,10 @@ def get_text_sentiment(documents):
 
     # Replace the example URL below with the URL of the image you want to analyze.
     try:
-        response = requests.post("https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment", headers=headers, params={}, json=documents)
+        response = requests.post(TEXT_API_URL, headers=headers, params={}, json=documents)
         data = response.json()
-        return data
+        # data = {'documents': [{'score': 0.5, 'id': '1'}], 'errors': []}
+        return data['documents'][0]['score']
     except Exception as e:
         print(e.args)
 
@@ -37,7 +39,7 @@ def measure_emotion(url):
     body = {'url': url}
 
     try:
-        response = requests.post("https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize", headers=headers, params={}, json=body)
+        response = requests.post(PHOTO_API_URL, headers=headers, params={}, json=body)
         data = response.json()
         return get_photo_happiness(data)
     except Exception as e:
@@ -49,18 +51,28 @@ def get_photo_happiness(data):
         happiness.append(i['scores']['happiness'] + i['scores']['surprise']-i['scores']['sadness'] - i['scores']['anger'])
     return np.sum(happiness)
 
-with open('details.json','r') as file:
-    data = json.load(file)
-happiness = get_photo_happiness(data)
-
 def make_text_analytics_document(id, message):
     text = {}
-    text['id'] = str(id)
     text['language'] = 'en'
+    text['id'] = str(1)
     text['text'] = message
-    return text
+    return {'documents': [text]}
 
-def analyse_post(self):
-    post = database.get_next_post()
-    post.image_emotion = measure_emotion(post['url'])
-    # post.text_sentiment = get_text_sentiment()
+def find_category(message, categories = []):
+    for category in categories:
+        if category in message:
+            return category
+    return 'none'
+
+def analyse_post():
+    post = database.read_next_post()
+    if post.image_url:
+        post.image_emotion = measure_emotion(post.image_url)
+    document = make_text_analytics_document(post.id, post.message)
+    post.text_sentiment = get_text_sentiment(document)
+    post.category = find_category(post.message)
+    post.analysed = True
+    post.save()
+
+if __name__ == '__main__':
+    analyse_post()

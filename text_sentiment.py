@@ -30,6 +30,7 @@ def get_text_sentiment(documents):
     try:
         response = requests.post("https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment", headers=headers, params={}, json=documents)
         data = response.json()
+        return data
     except Exception as e:
         print(e.args)
 
