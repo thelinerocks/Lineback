@@ -79,7 +79,7 @@ def get_mention(category, last_id):
     if db.is_closed():
         db.connect()
     try:
-        x = TaggedPost.select().where((TaggedPost.category==category) & (TaggedPost.id > last_id)).order_by(TaggedPost.id.desc()).get()
+        x = TaggedPost.select().where((TaggedPost.category==category)).order_by(fn.Random()).get()
     except DoesNotExist:
         return None
     except Exception as e:
