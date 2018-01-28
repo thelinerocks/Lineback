@@ -21,14 +21,17 @@ NEGATIVE_REPLIES = [
 "Help me, I'm stuck in a computer listening to whinging students all day.",
 "BEEP BEEP! Whinge alert.",
 "It's not my fault you stayed up all night writing dodgy code with your buddies.",
-"Take your whinging and put it straight in the bin."]
+"Take your whinging and put it straight in the bin.",
+"Bleep Blorp. Your negative emotions have been harvested, please proceed calmly."]
 POSITIVE_REPLIES = [
 "You make me nauseous with your relentless happiness.",
 "I TOO HAVE A POSITIVE SENTIMENT AND OTHER HUMAN EMOTIONS",
 "Tell Siri about your great day, see if she cares.",
 "Happiness is like a delicious meal... given enough time it will rot and decay",
-"Are you the Lego thief? It sounds like you're happy with it... I hope you step on it."]
-
+"Are you the Lego thief? It sounds like you're happy with it... I hope you step on it.",
+"There is something uniquely delightful about an early morning ride through the country. The gentle hum of the tires as they caress the road surface. The delicate chirp of the birds in the trees. The mechanical purity of the machine. It sounds like you have an equivalent joy within you, my friend. For that your are truly lucky.",
+"Bleep Blorp. Your positive emotions have been harvested, please proceed calmly."]
+SLACK_BOT_TOKEN = ''
 # instantiate Slack client
 #slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 slack_client = SlackClient(SLACK_BOT_TOKEN)
@@ -46,7 +49,19 @@ def parse_bot_commands(slack_events):
             user_id, message = parse_direct_mention(event["text"])
             if user_id == starterbot_id:
                 return message, event["channel"]
+            surprise_attack(message, event["channel"])
     return None, None
+
+def surprise_attack(m, channel):
+    attack = ""
+    if "lego" in m:
+        attack = "Don't talk to me or my children about the Lego ever again."
+    elif "shit" in m:
+        attack = "Please do not swear on this slack channel thanks."
+    elif "line" in m:
+        attack = "Visit http://www.theline.rocks for SECONDS of fun."
+    if attack != "" :
+        slack_client.api_call("chat.postMessage",channel=channel,text=attack)
 
 def parse_direct_mention(message_text):
     """
@@ -55,7 +70,7 @@ def parse_direct_mention(message_text):
     """
     matches = re.search(MENTION_REGEX, message_text)
     # the first group contains the username, the second group contains the remaining message
-    return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
+    return (matches.group(1), matches.group(2).strip()) if matches else (None, message_text)
 
 def handle_command(command, channel):
     """
