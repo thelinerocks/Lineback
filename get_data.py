@@ -17,7 +17,10 @@ class make_data(object):
         return total_array
 
     def get_ticks(self,category, old_total):
-        total = get_sum_text(category) + get_sum_image(category)
+        sum_text = get_sum_text(category)
+        sum_image = get_sum_image(category)
+        total = sum_text + sum_image
+        logger.info("Got text,image %.2f, %.2f for %s", sum_text, sum_image, category)
         return self.add_steps([old_total,total])
 
 def add_to_points_list(r, key, val):
