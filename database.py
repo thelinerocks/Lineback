@@ -1,9 +1,11 @@
 from peewee import *
+import datetime
+import sys
 
 db = SqliteDatabase('data/tagged_posts.db')
 
 class TaggedPost(Model):
-    #time_stamp = TimestampField()
+    date = DateTimeField(default=datetime.datetime.utcnow())
     social_network = CharField()
     user_name = CharField()
     message = TextField()
@@ -19,15 +21,9 @@ class TaggedPost(Model):
     class Meta:
         database = db
 
-
-if not TaggedPost.table_exists():
-    db.create_tables([TaggedPost])
-    db.close()
-
 def save_post(info_dict):
-    if not db.is_closed():
+    if db.is_closed():
         db.connect()
-    db.connect()
     new_post = TaggedPost(**info_dict)
     new_post.save()
     db.close()
@@ -51,3 +47,20 @@ def read_next_n_posts(num):
         pass
     db.close()
     return posts
+
+def get_most_recent(social_network):
+    if db.is_closed():
+        db.connect()
+    try:
+        recent = TaggedPost.select().order_by(TaggedPost.date.desc()).get()
+    except DoesNotExist:
+        return None
+    except Exception as e:
+        print(e)
+    db.close()
+    return recent.date
+
+if __name__=="__main__":
+    if sys.argv[1] == "create":
+        db.create_tables([TaggedPost])
+        db.close()
