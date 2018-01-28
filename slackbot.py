@@ -76,6 +76,7 @@ def handle_command(command, channel):
     # Push to database
     command_info = {}
     command_info['social_network'] = 'slack'
+    command_info['profile_pic_url'] = 'http://theline.rocks/static/slack.png'
     command_info['message'] = command
     command_info['text_sentiment'] = sentiment_score
     command_info['analysed'] = True

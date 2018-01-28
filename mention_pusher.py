@@ -21,7 +21,7 @@ def push_to_frontend(r, category, m):
 
     logger.info("Pushing message from %s/%s", mention["user_name"], mention["social_network"])
 
-    if r.llen(key) < 5:
+    if r.llen(key) < 2.5:
         r.lpush(key, json.dumps(mention))
 
 if __name__=="__main__":
