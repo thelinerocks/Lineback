@@ -5,6 +5,7 @@ import os
 # from twitter_auth import *
 # OR
 
+
 consumer_key = 'cfUOK7slPd3UOXx05JEHUi73H'
 consumer_secret = '0HKVWiKKg6pruY9nTtWiZIjG0Yu3yuN4S7APAMWHG9IrqKqh3B'
 access_token = '1588152001-x6kGJtgFhP8ya7BIJHEfp9GaI2cpMDdLGRvKuB0'
@@ -18,6 +19,7 @@ access_token_secret = 'qtIt7gizK69WdLhIzyGvh1oRBOMtpHFvkMrue2V4Ww65s'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
+
 
 # override tweepy.StreamListener to add logic to on_status
 class MyStreamListener(tweepy.StreamListener):
@@ -55,8 +57,12 @@ class MyStreamListener(tweepy.StreamListener):
 
         return status_info
 
+def twitter_update_status(self,text = "#LineisLife"):
+    api.update_status(status=text)
+
 myStreamListener = MyStreamListener()
-myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
+myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
 myStream.filter(track=['python'])
+
 
 
