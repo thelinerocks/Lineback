@@ -75,4 +75,8 @@ def analyse_post():
     post.save()
 
 if __name__ == '__main__':
-    analyse_post()
+    while True:
+        try:
+            analyse_post()
+        except:
+            print('cognition threw an error')
