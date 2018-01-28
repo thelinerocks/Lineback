@@ -4,6 +4,10 @@ import numpy as np
 import database
 import re
 
+import logging
+
+logger = logging.getLogger("cognition")
+
 EXPR = r'#theline\s#(?P<match>\S*).*'
 PHOTO_API_URL = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize"
 TEXT_API_URL = "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment"
@@ -69,6 +73,9 @@ def find_category(message):
 
 def analyse_post():
     post = database.read_next_post()
+    if post is None:
+        return False
+
     if post.image_url:
         post.image_emotion = measure_emotion(post.image_url)
     document = make_text_analytics_document(post.id, post.message)
@@ -76,10 +83,21 @@ def analyse_post():
     post.category = find_category(post.message)
     post.analysed = True
     post.save()
+    return True
 
 if __name__ == '__main__':
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+            '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
+
     while True:
         try:
-            analyse_post()
-        except:
-            print('cognition threw an error')
+            ok = analyse_post()
+            if not ok:
+                time.sleep(1)
+                logger.debug("sleeping 1")
+        except Exception as e:
+            logger.exception("Error analysing brainz, cognition threw an error")

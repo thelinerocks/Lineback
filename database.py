@@ -33,7 +33,10 @@ def read_next_post():
         db.connect()
     try:
         post = TaggedPost.get(TaggedPost.analysed == False)
-    except:
+    except DoesNotExist:
+        return None
+    except Exception as e:
+        print(e)
         pass
     db.close()
     return post

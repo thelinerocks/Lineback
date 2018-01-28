@@ -6,7 +6,7 @@ import logging
 import time
 
 import redis
-logger = logging.getLogger("provider")
+logger = logging.getLogger("get_data")
 
 class make_data(object):
     def add_steps(self,data):
@@ -36,6 +36,13 @@ if __name__=="__main__":
     r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
     while True:
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter(
+                '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.setLevel(logging.DEBUG)
+
         keys = r.keys(pattern="points-*")
         outputs = {}
         for k in keys:
