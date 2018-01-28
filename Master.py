@@ -41,7 +41,9 @@ class get_values(object):
                 self.localtime = time.time()
 
             documents['documents'] = self.social_text
+            print(documents)
             results = get_text_sentiment(documents)
+            print(results)
             value = sum(self.url)
             self.secs_index = int((self.secs_index+1)%(60/self.interval))
             self.secs[self.secs_index] = value

@@ -29,7 +29,21 @@ def get_text_sentiment(documents):
     # Replace the example URL below with the URL of the image you want to analyze.
     try:
         response = requests.post("https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment", headers=headers, params={}, json=documents)
+        print(response.status_code)
         data = response.json()
+        return data
     except Exception as e:
         print(e.args)
 
+
+documents = {}
+social_text = []
+
+text = {}
+text['id'] = str(0)
+text['language'] = 'en'
+text['text'] = "Hello Frank good morning"
+social_text.append(text)
+documents['documents'] = social_text
+
+print(get_text_sentiment(documents))
